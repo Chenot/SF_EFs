@@ -138,98 +138,96 @@ write_file <- function(file, data_dir, tmp_dir) {
 }
 
 #compute points of one session of one participant and return a dataframe (or the points only if point_only=TRUE)
-compute_points<-function(file_to_read, point_only=FALSE,press=FALSE,prct=TRUE){
-  e1=file_to_read$e1
-  dp=subset(file_to_read,e1=="press"|e1=="new_mine"|e1=="bonus_available"|e1=="collide"|e1=="destroyed"|e1=="warp"|e1=="score+"|e1=="timeout"|e1=="pnts_bonus_capture"|e1=="pnts_bonus_failure"|e1=="shots_bonus_capture"|e1=="shots_bonus_failure",select=c("system_time","e1","e2","e3"))
-  dp$Type=NA
-  dp$Point=0
-  dp$Group=NA
-  #Ship collision
-  dp$Type[dp$e1=="collide"& (dp$e2=="shell"|dp$e2=="mine_0")]="ShipDamage"
-  dp$Point[dp$e1=="collide"& (dp$e2=="shell"|dp$e2=="mine_0")]=-50
-  #Ship destruction
-  dp$Type[dp$e1=="destroyed"& dp$e2=="ship"]="ShipDestruction"
-  dp$Point[dp$e1=="destroyed"& dp$e2=="ship"]=-100
-  #Border crossing
-  dp$Type[dp$e1=="warp"]="BorderCrossing"
-  dp$Point[dp$e1=="warp"]=-35
-  #Fortress collision
-  dp$Type[dp$e1=="collide"& dp$e2=="small_hex" & dp$e3=="ship"]="FortressCollision"
-  dp$Point[dp$e1=="collide"& dp$e2=="small_hex" & dp$e3=="ship"]=-35
-  #Fortress destruction
-  dp$Type[dp$e1=="destroyed"&dp$e2=="fortress"]="FortressDestruction"
-  dp$Point[dp$e1=="destroyed"&dp$e2=="fortress"]=250
-  # #Friends Mines destruction (false version)
-  # dp$Type[dp$e1=="score+"&dp$e2=="mines"&dp$e3=="50"]="FriendMineDestruction"
-  # dp$Point[dp$e1=="score+"&dp$e2=="mines"&dp$e3=="50"]=60
-  # #Foes Mines destruction
-  # dp$Type[dp$e1=="score+"&dp$e2=="mines"&dp$e3=="60"]="FoeMineDestruction"
-  # dp$Point[dp$e1=="score+"&dp$e2=="mines"&dp$e3=="60"]=50 #INVERSION?
-  # #Mine disappears
-  # dp$Type[dp$e1=="timeout"&dp$e2=="mine"]="MineExtinction"
-  # dp$Point[dp$e1=="timeout"&dp$e2=="mine"]=-50
-  #Friends Mines destruction
-  dp$Type[dp$e1=="collide"&dp$e2=="friend_mine"]="FriendMineDestruction"
-  dp$Point[dp$e1=="collide"&dp$e2=="friend_mine"]=50
-  #Foes Mines destruction
-  dp$Type[dp$e1=="collide"&dp$e2=="tagged_foe_mine"]="FoeMineDestruction"
-  dp$Point[dp$e1=="collide"&dp$e2=="tagged_foe_mine"]=60 
-  #Mine disappears
-  dp$Type[dp$e1=="timeout"&dp$e2=="mine"]="MineExtinction"
-  dp$Point[dp$e1=="timeout"&dp$e2=="mine"]=-50
-  # #Collision with a mine
-  # dp$Type[dp$e1=="collide"& (dp$e2=="shell"|dp$e2=="mine_0")]="MineCollision"
-  # dp$Point
-  #Points Bonus capture
-  dp$Type[dp$e1=="pnts_bonus_capture"]="PointsBonusCapture"
-  dp$Point[dp$e1=="pnts_bonus_capture"]=100
-  #Shots Bonus capture
-  dp$Type[dp$e1=="shots_bonus_capture"]="ShotsBonusCapture"
-  dp$Point[dp$e1=="shots_bonus_capture"]=50
-  #Bonus failure
-  dp$Type[dp$e1=="pnts_bonus_failure"|dp$e1=="shots_bonus_failure"]="BonusFailure"
-  dp$Point[dp$e1=="pnts_bonus_failure"|dp$e1=="shots_bonus_failure"]=-50
-  #New Mine
-  dp$Type[dp$e1=="new_mine"]="NewMine"
-  dp$Point[dp$e1=="new_mine"]=0
-  #New Bonus
-  dp$Type[dp$e1=="bonus_available"]="NewBonus"
-  dp$Point[dp$e1=="bonus_available"]=0
-  #Missile collide Fortress
-  dp$Type[dp$e1=="collide"&dp$e3=="fortress"]="FortressShot"
-  dp$Point[dp$e1=="collide"&dp$e3=="fortress"]=0
-  #Group of Scores
-  dp$Group[dp$Type=="ShipDamage"|dp$Type=="ShipDestruction"|dp$Type=="BorderCrossing"|dp$Type=="FortressCollision"]="Flight"
-  dp$Group[dp$Type=="FortressDestruction"|dp$Type=="FortressShot"]="Fortress"
-  dp$Group[dp$Type=="FriendMineDestruction"|dp$Type=="FoeMineDestruction"|dp$Type=="MineExtinction"]="Mine"
-  dp$Group[dp$Type=="PointsBonusCapture"|dp$Type=="ShotsBonusCapture"|dp$Type=="BonusFailure"]="Bonus"
-  dp$Group[dp$Type=="FortressShot"]="Bonus"
-  dp$Group[dp$e1=="press"]="Press"
-  dp$Type[dp$e1=="press"]="Press"
-  
-  dp$Group[dp$e1=="new_mine"|dp$e1=="bonus_available"|dp$Type=="FortressShot"]="GameEvent"
-  
-  dp=subset(dp,!is.na(Type),select=c("system_time","e1","e2","e3","Type","Point","Group"))
-  
-  # Add TotalScore column with cumulative sum of Points
-  dp$TotalScore = cumsum(dp$Point)
-  
-  # Calculate number of mines and bonuses for difficulty (used only in summary files)
-  num_bonus = sum(dp$Type=="NewBonus")
-  num_mine = sum(dp$Type=="NewMine")
-  
-  if(point_only==TRUE&press==FALSE){
-    return(subset(dp,e1!="press",select=c("Group","Point","TotalScore")))
-  }else if(prct==TRUE){
-    return(dp)  # Return without adding Difficulty column
-  }else{
-    return(subset(dp,e1!="new_mine"|e1!="bonus_available"))
-  }
+compute_points <- function(file_to_read, point_only=FALSE, press=FALSE, prct=TRUE) {
+    e1=file_to_read$e1
+    dp=subset(file_to_read,e1=="press"|e1=="new_mine"|e1=="bonus_available"|e1=="collide"|e1=="destroyed"|e1=="warp"|e1=="score+"|e1=="timeout"|e1=="pnts_bonus_capture"|e1=="pnts_bonus_failure"|e1=="shots_bonus_capture"|e1=="shots_bonus_failure",select=c("system_time","e1","e2","e3"))
+    dp$Type=NA
+    dp$Point=0
+    dp$Group=NA
+    #Ship collision
+    dp$Type[dp$e1=="collide"& (dp$e2=="shell"|dp$e2=="mine_0")]="ShipDamage"
+    dp$Point[dp$e1=="collide"& (dp$e2=="shell"|dp$e2=="mine_0")]=-50
+    #Ship destruction
+    dp$Type[dp$e1=="destroyed"& dp$e2=="ship"]="ShipDestruction"
+    dp$Point[dp$e1=="destroyed"& dp$e2=="ship"]=-100
+    #Border crossing
+    dp$Type[dp$e1=="warp"]="BorderCrossing"
+    dp$Point[dp$e1=="warp"]=-35
+    #Fortress collision
+    dp$Type[dp$e1=="collide"& dp$e2=="small_hex" & dp$e3=="ship"]="FortressCollision"
+    dp$Point[dp$e1=="collide"& dp$e2=="small_hex" & dp$e3=="ship"]=-35
+    #Fortress destruction
+    dp$Type[dp$e1=="destroyed"&dp$e2=="fortress"]="FortressDestruction"
+    dp$Point[dp$e1=="destroyed"&dp$e2=="fortress"]=250
+    # #Friends Mines destruction (false version)
+    # dp$Type[dp$e1=="score+"&dp$e2=="mines"&dp$e3=="50"]="FriendMineDestruction"
+    # dp$Point[dp$e1=="score+"&dp$e2=="mines"&dp$e3=="50"]=60
+    # #Foes Mines destruction
+    # dp$Type[dp$e1=="score+"&dp$e2=="mines"&dp$e3=="60"]="FoeMineDestruction"
+    # dp$Point[dp$e1=="score+"&dp$e2=="mines"&dp$e3=="60"]=50 #INVERSION?
+    # #Mine disappears
+    # dp$Type[dp$e1=="timeout"&dp$e2=="mine"]="MineExtinction"
+    # dp$Point[dp$e1=="timeout"&dp$e2=="mine"]=-50
+    #Friends Mines destruction
+    dp$Type[dp$e1=="collide"&dp$e2=="friend_mine"]="FriendMineDestruction"
+    dp$Point[dp$e1=="collide"&dp$e2=="friend_mine"]=50
+    #Foes Mines destruction
+    dp$Type[dp$e1=="collide"&dp$e2=="tagged_foe_mine"]="FoeMineDestruction"
+    dp$Point[dp$e1=="collide"&dp$e2=="tagged_foe_mine"]=60 
+    #Mine disappears
+    dp$Type[dp$e1=="timeout"&dp$e2=="mine"]="MineExtinction"
+    dp$Point[dp$e1=="timeout"&dp$e2=="mine"]=-50
+    # #Collision with a mine
+    # dp$Type[dp$e1=="collide"& (dp$e2=="shell"|dp$e2=="mine_0")]="MineCollision"
+    # dp$Point
+    #Points Bonus capture
+    dp$Type[dp$e1=="pnts_bonus_capture"]="PointsBonusCapture"
+    dp$Point[dp$e1=="pnts_bonus_capture"]=100
+    #Shots Bonus capture
+    dp$Type[dp$e1=="shots_bonus_capture"]="ShotsBonusCapture"
+    dp$Point[dp$e1=="shots_bonus_capture"]=50
+    #Bonus failure
+    dp$Type[dp$e1=="pnts_bonus_failure"|dp$e1=="shots_bonus_failure"]="BonusFailure"
+    dp$Point[dp$e1=="pnts_bonus_failure"|dp$e1=="shots_bonus_failure"]=-50
+    #New Mine
+    dp$Type[dp$e1=="new_mine"]="NewMine"
+    dp$Point[dp$e1=="new_mine"]=0
+    #New Bonus
+    dp$Type[dp$e1=="bonus_available"]="NewBonus"
+    dp$Point[dp$e1=="bonus_available"]=0
+    #Missile collide Fortress
+    dp$Type[dp$e1=="collide"&dp$e3=="fortress"]="FortressShot"
+    dp$Point[dp$e1=="collide"&dp$e3=="fortress"]=0
+    #Group of Scores
+    dp$Group[dp$Type=="ShipDamage"|dp$Type=="ShipDestruction"|dp$Type=="BorderCrossing"|dp$Type=="FortressCollision"]="Flight"
+    dp$Group[dp$Type=="FortressDestruction"]="Fortress"  # Remove FortressShot from here
+    dp$Group[dp$Type=="FriendMineDestruction"|dp$Type=="FoeMineDestruction"|dp$Type=="MineExtinction"]="Mine"
+    dp$Group[dp$Type=="PointsBonusCapture"|dp$Type=="ShotsBonusCapture"|dp$Type=="BonusFailure"]="Bonus"
+    dp$Group[dp$Type=="FortressShot"]="Fortress"  # Give FortressShot its own assignment
+    dp$Group[dp$e1=="press"]="Press"
+    dp$Type[dp$e1=="press"]="Press"
+    
+    # Only assign GameEvent group to new_mine and bonus_available
+    dp$Group[dp$e1=="new_mine"|dp$e1=="bonus_available"]="GameEvent"
+    
+    # First filter out NA Types
+    dp = subset(dp, !is.na(Type), select=c("system_time","e1","e2","e3","Type","Point","Group"))
+    
+    # Then calculate TotalScore after all points and groups are properly assigned
+    dp$TotalScore = cumsum(dp$Point)
+    
+    if(point_only==TRUE&press==FALSE){
+        return(subset(dp,e1!="press",select=c("Group","Point","TotalScore")))
+    }else if(prct==TRUE){
+        return(dp)  # Return without adding Difficulty column
+    }else{
+        return(subset(dp,e1!="new_mine"|e1!="bonus_available"))
+    }
 }
 
 read_data_score <- function(files_data, tmp_dir, add_press=FALSE) {
   df_data = foreach(i=1:length(files_data), .combine=rbind) %do% {
-    file_d = read.table(files_data[i], header=TRUE, sep="\t")
+    file_d = read.csv(files_data[i], header=TRUE, stringsAsFactors=FALSE)
     if(!add_press) {
       file_d = subset(file_d, Type!="Press")
     }
@@ -298,7 +296,7 @@ read_final_Score <- function(files_data, tmp_dir, results_dir) {
             
             # Create summary row
             data.frame(
-                ID = substr(basename(file_path), 1, 4),
+                Participant = gsub("^P", "", substr(basename(file_path), 1, 4)),
                 Date = date_str,
                 Difficulty = difficulty,
                 TotalScore = sum(file$Point, na.rm = TRUE),
@@ -347,7 +345,7 @@ write_summary_file <- function(file, tmp_dir) {
     file_dir = dirname(file)
     
     # Read the clean file directly using the full path
-    clean_data = read.table(file, header=TRUE, sep="\t", dec=".", fill=TRUE)
+    clean_data = read.csv(file, header=TRUE, stringsAsFactors=FALSE)
     
     # Calculate summary statistics
     prct_bonus = (sum(clean_data$Type=="ShotsBonusCapture"|clean_data$Type=="PointsBonusCapture")*100)/sum(clean_data$Type=="NewBonus")
