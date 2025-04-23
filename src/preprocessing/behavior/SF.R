@@ -131,10 +131,9 @@ write_file <- function(file, data_dir, tmp_dir) {
     file_to_save = compute_points(file_to_save)
     
     # Write to new location
-    write.table(file_to_save, 
-                file.path(out_dir, paste0(id, "_SF_", datetime_str, ".txt")),
-                append = FALSE, sep = "\t", dec = ".", 
-                row.names = TRUE, col.names = TRUE, quote=FALSE)
+    write.csv(file_to_save, 
+          file.path(out_dir, paste0(id, "_SF_", datetime_str, ".csv")),
+          row.names = TRUE)
     return(id)
 }
 
@@ -265,12 +264,9 @@ read_final_Score <- function(files_data, tmp_dir, results_dir) {
     df_data <- foreach(file_path = files_data, .combine = rbind) %do% {
         tryCatch({
             # Read file
-            file <- read.table(file_path, 
-                             header = TRUE, 
-                             sep = "\t", 
-                             dec = ".", 
-                             fill = TRUE,
-                             stringsAsFactors = FALSE)
+            file <- read.csv(file_path, 
+                            header = TRUE,
+                            stringsAsFactors = FALSE)
             
             # Basic validation
             if (nrow(file) == 0) {
@@ -331,15 +327,11 @@ read_final_Score <- function(files_data, tmp_dir, results_dir) {
     }
     
     # Write summary to file
-    output_file <- file.path(results_dir, "SF_summary.txt")
+    output_file <- file.path(results_dir, "SF_summary.csv")
     tryCatch({
-        write.table(df_data,
-                   file = output_file,
-                   sep = "\t",
-                   dec = ".",
-                   row.names = FALSE,
-                   col.names = TRUE,
-                   quote = FALSE)
+        write.csv(df_data,
+                file = output_file,
+                row.names = FALSE)
     }, error = function(e) {
         warning(sprintf("Could not write summary file: %s", e$message))
     })
@@ -383,114 +375,11 @@ write_summary_file <- function(file, tmp_dir) {
     
     # Create summary filename
     summary_filename = sub("_SF_", "_SF_summary_", filename)
-    
-    # Write summary to same directory as input file
-    write.table(summary_data, 
-                file.path(file_dir, summary_filename),
-                append = FALSE, 
-                sep = "\t", 
-                dec = ".", 
-                row.names = FALSE, 
-                col.names = TRUE,
-                quote = FALSE)
+    summary_filename = sub("\\.txt$", ".csv", summary_filename)
+    write.csv(summary_data, 
+            file.path(file_dir, summary_filename),
+            row.names = FALSE)
 }
-
-# bar_width <- 50  # or any other suitable width
-
-# # Check and create directories if needed
-# for (dir in c(data_dir, tmp_dir, results_dir)) {
-#   if (!dir.exists(dir)) {
-#     dir.create(dir, recursive = TRUE)
-#     message(sprintf("Created directory: %s", dir))
-#   }
-# }
-
-# # Find all SF files recursively in BIDS structure
-# files = list.files(path = data_dir, 
-#                    pattern = "^SpaceFortress-5.1.0.*\\.txt$",
-#                    recursive = TRUE,
-#                    # Change this to FALSE to get relative paths
-#                    full.names = FALSE)
-
-# # Replace the invisible(lapply()) call with a for loop and progress bar
-# cat("Processing raw files...\n")
-# total_files <- length(files)
-
-# for(i in seq_along(files)) {
-#     tryCatch({
-#         # Process file
-#         write_file(files[i], data_dir=data_dir, tmp_dir=tmp_dir)
-#     }, error = function(e) {
-#         cat(sprintf("Error processing file: %s\nError message: %s\n", files[i], e$message))
-#         # Optionally, add file to a list of failed files
-#     })
-    
-#     # Calculate progress
-#     progress <- round((i/total_files) * 100)
-#     filled <- round((i/total_files) * bar_width)
-#     empty <- bar_width - filled
-    
-#     # Show progress
-#     cat(sprintf("\rProcessing files: %d/%d [%s%s] %d%%", 
-#                 i, total_files,
-#                 paste(rep("=", filled), collapse=""),
-#                 paste(rep(" ", empty), collapse=""),
-#                 progress))
-#     flush.console()
-# }
-
-# cat("\n") # Add newline after progress bar completes
-
-# # Find all cleaned files - keep full paths here since we're reading directly
-# cleaned_files = list.files(path = tmp_dir,
-#                           pattern = "^P\\d{3}_SF_\\d{4}.*\\.txt$",
-#                           recursive = TRUE,
-#                           full.names = TRUE)
-
-
-# # Add newline after first loop completes
-# cat("\nPreprocessing complete!\n\n")
-
-# # Get cleaned files
-# cleaned_files = list.files(path = tmp_dir,
-#                           pattern = "^P\\d{3}_SF_\\d{4}.*\\.txt$",
-#                           recursive = TRUE,
-#                           full.names = TRUE)
-
-# # Add progress bar for individual summaries
-# total_summaries <- length(cleaned_files)
-# cat("Generating individual summaries...\n")
-
-# for(i in seq_along(cleaned_files)) {
-#     tryCatch({
-#         # Process summary
-#         write_summary_file(cleaned_files[i], tmp_dir=tmp_dir)
-#     }, error = function(e) {
-#         cat(sprintf("Error processing file: %s\nError message: %s\n", cleaned_files[i], e$message))
-#         # Optionally, add file to a list of failed files
-#     })
-    
-#     # Calculate progress
-#     progress <- round((i/total_summaries) * 100)
-#     filled <- round((i/total_summaries) * bar_width)
-#     empty <- bar_width - filled
-    
-#     # Show progress
-#     cat(sprintf("\rGenerating summaries: %d/%d [%s%s] %d%%", 
-#                 i, total_summaries,
-#                 paste(rep("=", filled), collapse=""),
-#                 paste(rep(" ", empty), collapse=""),
-#                 progress))
-#     flush.console()
-# }
-
-# cat("\nIndividual summaries complete!\n\n")
-
-# # Add progress indicator for group summary
-# cat("Generating group summary...\n")
-# data = read_final_Score(cleaned_files, tmp_dir=tmp_dir, results_dir=results_dir)
-# cat("Group summary complete!\n")
-
 
 #' Process Space Fortress Data
 #' 
@@ -526,7 +415,7 @@ process_SF <- function(data_dir = NULL, tmp_dir = NULL, results_dir = NULL, bar_
         root_dir <- normalizePath(file.path(script_path, "..", "..", ".."))
         if (is.null(data_dir)) data_dir <- normalizePath(file.path(root_dir, "data"))
         if (is.null(tmp_dir)) tmp_dir <- normalizePath(file.path(root_dir, "tmp_data"))
-        if (is.null(results_dir)) results_dir <- normalizePath(file.path(root_dir, "results"))
+        if (is.null(results_dir)) results_dir <- normalizePath(file.path(root_dir, "results", "combined_data", "behavior"))
     }
     
     # Create directories if needed
@@ -575,7 +464,7 @@ process_SF <- function(data_dir = NULL, tmp_dir = NULL, results_dir = NULL, bar_
     
     # Get cleaned files
     cleaned_files <- list.files(path = tmp_dir,
-                               pattern = "^P\\d{3}_SF_\\d{4}.*\\.txt$",
+                               pattern = "^P\\d{3}_SF_\\d{4}.*\\.csv$",
                                recursive = TRUE,
                                full.names = TRUE)
     
