@@ -35,7 +35,7 @@ if (!requireNamespace("rstudioapi", quietly = TRUE)) {
 root_dir <- normalizePath(file.path(script_path, "..", "..", ".."))
 data_dir <- normalizePath(file.path(root_dir, "data"))  # Remove extra "tests" folder
 tmp_dir <- normalizePath(file.path(root_dir, "tmp_data"))
-results_dir <- normalizePath(file.path(root_dir, "results"))
+results_dir <- normalizePath(file.path(root_dir, "results", "combined_data", "behavior"))
 
 ##CLEANING SF TXT FILES & POINT COMPUTATION
 date <- function(file_name){
