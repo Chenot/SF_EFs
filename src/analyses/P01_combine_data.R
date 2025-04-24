@@ -42,8 +42,6 @@ df_stroop <- read.csv(file.path(data_path, "stroop.csv"))
 df_numberletter <- read.csv(file.path(data_path, "numberletter.csv"))
 df_SF <- read.csv(file.path(data_path, "SF_summary.csv"))
 
-
-
 # Select Dependent variable
 df_demographics <- select(df_demographics, -Comment)
 df_antisaccade <- select(df_antisaccade, -score_med_corrected, -score_med_corrected, -score_mean_raw, -score_med_raw, -percentage_resp_correct, -percentage_excluded_data)
@@ -52,7 +50,6 @@ df_colorshape <- select(df_colorshape, -mean_latency_switch, -mean_latency_noswi
 df_numberletter <- select(df_numberletter, -mean_latency_switch, -mean_latency_noswitch, -percentage_resp_correct, -percentage_excluded_data)
 df_stopsignal <- select(df_stopsignal, -prob_stop, -ssd, -stop_rt, -nonstop_rt, -ssrt_mean)
 df_stroop <- select(df_stroop, -mean_latency_congruent, -mean_latency_noncongruent, -mean_latency_control, -percentage_resp_correct, -percentage_excluded_data, -block)
-
 
 # Select Dependent variable (SF games)
 df_SF_all <- df_SF[order(df_SF$Participant, df_SF$Date), ] # Add game number column based on order within each Participant and Difficulty
@@ -70,8 +67,11 @@ names(df_SF_wide) <- gsub("TotalScore.", "", names(df_SF_wide)) # Rename columns
 df_SF_wide <- select(df_SF_wide, -SF_multi_06) # Remove potential game 6
 df_SF_wide <- as.data.frame(df_SF_wide[, names(df_SF_wide)])
 
-df_SF <- df_SF[df_SF$Difficulty == "multitask", ] # Select best SF score for multitask games
-df_SF <- aggregate(TotalScore ~ Participant, data = df_SF, FUN = max)
+# For each participant, get the SF game with the maximum score for multitask
+df_SF <- df_SF[df_SF$Difficulty == "multitask", ]
+df_SF <- do.call(rbind, by(df_SF, df_SF$Participant, function(x) x[which.max(x$TotalScore), ]))
+df_SF <- df_SF[, c("Participant", "TotalScore", "Flight", "Bonus", "Mine", "Fortress")]
+
 df_demographics$Participant <- gsub("P", "", df_demographics$Participant)
 df_demographics$Participant <- as.numeric(df_demographics$Participant)
 

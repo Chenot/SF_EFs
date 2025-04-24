@@ -17,20 +17,9 @@ project_dir <- dirname(dirname(this_dir)) # Get the project directory
 
 # Data & Figure paths
 data_path <- file.path(project_dir, "data") # Define the relative path to the data files
-df_sf_fidelity <- read.csv(file.path(project_dir,"results", "combined_data", "behavior", "SF_summary.csv"))
-df_sf_fidelity <- read.csv(file.path(project_dir,"results", "combined_data", "behavior", "SF_summary.csv"))
-
 df_final <- read.csv(file.path(project_dir,"results", "combined_data", "data.csv"))
 df_final <- df_final[df_final$Inclusion == 1, ]
-
 figure_path <- file.path(project_dir, "results" , "figures") # Define the relative path to the data and results
-
-
-
-# # Remove excluded participants
-# df_sf_fidelity <- df_sf_fidelity %>%
-#   inner_join(df_demographics %>% filter(Inclusion == 1), by = "Participant")
-# df_final <- df_final %>% filter(Inclusion == 1)
 
 #################
 ## SENSITIVITY ##
@@ -74,16 +63,9 @@ ggsave(filename, plot = combined_plot, width = 10, height = 4, units = "in")
 #################
 ## RELIABILITY ##
 #################
-# Select multitask games
-selected_games <- df_sf_fidelity %>% 
-  filter(Game %in% c("G02", "G04", "G06", "G08", "G10"))
+# Select multi games columns
+df_icc <- df_final[, c("SF_multi_01", "SF_multi_02", "SF_multi_03", "SF_multi_04", "SF_multi_05")]
 
-# Reshape the dataframe
-reshaped_df <- selected_games %>%
-  select(Participant, Game, TotalScore) %>%
-  mutate(Game = recode(Game, "G02" = "TotalScore_1", "G04" = "TotalScore_2", "G06" = "TotalScore_3", "G08" = "TotalScore_4", "G10" = "TotalScore_5")) %>%
-  pivot_wider(names_from = Game, values_from = TotalScore)
-
-icc_result <- ICC(reshaped_df[, 2:6]) # Exclude the Participant column for the calculation
-print(icc_result) # Print the ICC result
-
+# Calculate ICC
+icc_result <- ICC(df_icc)
+print(icc_result)

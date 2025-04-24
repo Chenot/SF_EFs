@@ -16,53 +16,8 @@ project_dir <- dirname(dirname(this_dir)) # Get the project directory
 
 # Data & Figure paths
 data_path <- file.path(project_dir, "data") # Define the relative path to the data files
-df_demographics <- read.csv(file.path(data_path,"participants.csv"))
-df_final <- read.csv(file.path(project_dir,"results", "combined_data", "data.csv"))
+df_final <- read.csv(file.path(project_dir,"results", "combined_data", "data_zscored.csv"))
 figure_path <- file.path(project_dir, "results" , "figures") # Define the relative path to the data and results
-
-# Remove excluded participants
-df_final <- df_final %>% filter(Inclusion == 1)
-
-################################################################################
-## DATA TRANSFORMATION (z-score)
-# Arcsine transform the data
-df_final$keeptrack_asin <- asin(sqrt(df_final$keeptrack / max(df_final$keeptrack)))
-df_final$dualnback_asin <- asin(sqrt(df_final$dualnback / max(df_final$dualnback)))
-df_final$lettermemory_asin <- asin(sqrt(df_final$lettermemory / max(df_final$lettermemory)))
-
-# Compute the z-score
-df_final <- df_final %>%
-  mutate(zscore_antisaccade = as.vector(scale(-antisaccade)),
-         zscore_categoryswitch = as.vector(scale(-categoryswitch)),
-         zscore_colorshape = as.vector(scale(-colorshape)),
-         zscore_dualnback = as.vector(scale(dualnback_asin)),
-         zscore_keeptrack = as.vector(scale(keeptrack_asin)),
-         zscore_lettermemory = as.vector(scale(lettermemory_asin)),
-         zscore_stopsignal = as.vector(scale(-stopsignal)),
-         zscore_stroop = as.vector(scale(-stroop)),
-         zscore_numberletter = as.vector(scale(-numberletter)),
-         zscore_SF = as.vector(scale(TotalScore)))
-
-
-# Replace SD values < -3SD with -3SD
-df_final <- df_final %>%
-  mutate(across(starts_with("zscore_"), ~ifelse(.x < -3, -3, .x)))
-
-# Calculate mean z-score
-df_final$zscore_inhibition <- rowMeans(subset(df_final, select = c(zscore_stroop, zscore_stopsignal, zscore_antisaccade)), na.rm = TRUE)
-df_final$zscore_WM <- rowMeans(subset(df_final, select = c(zscore_keeptrack, zscore_lettermemory, zscore_dualnback)), na.rm = TRUE)
-df_final$zscore_shifting <- rowMeans(subset(df_final, select = c(zscore_numberletter, zscore_categoryswitch, zscore_colorshape)), na.rm = TRUE)
-df_final$zscore_EF <-rowMeans(subset(df_final, select = c(
-  zscore_stroop,
-  zscore_stopsignal,
-  zscore_antisaccade,
-  zscore_keeptrack,
-  zscore_lettermemory,  
-  zscore_dualnback,
-  zscore_numberletter,
-  zscore_categoryswitch,
-  zscore_colorshape))
-  , na.rm = TRUE)
 
 # p value formating
 format_p_value <- function(p_value) {
@@ -74,7 +29,6 @@ format_p_value <- function(p_value) {
     paste("p =", formatted_p)
   }
 }
-
 
 ################################################################################
 ## Hypothesis 1. The EF composite score highly correlates with the maximum score obtained in SF.
@@ -372,7 +326,7 @@ print(model1_table, type = "latex", include.rownames = FALSE)
 ## (d) Flying score with updating. 
 # Select Space Fortress scores
 space_fortress_scores <- df_final %>%
-  select(TotalScore, Flight, Bonus, Mine, Fortress)
+  select(SF, Flight, Bonus, Mine, Fortress)
 
 # Select cognitive task z-scores
 cognitive_task_scores <- df_final %>%
