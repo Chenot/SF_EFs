@@ -70,8 +70,7 @@ df_final$zscore_EF <-rowMeans(subset(df_final, select = c(
   zscore_dualnback,
   zscore_numberletter,
   zscore_categoryswitch,
-  zscore_colorshape,
-  zscore_SF)),
+  zscore_colorshape)),
   na.rm = TRUE)
 
 
