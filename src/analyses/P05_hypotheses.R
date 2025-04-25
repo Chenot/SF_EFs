@@ -252,16 +252,19 @@ print(t_test_result)
 print(mean_sd)
 
 # Creating the plot
-SF_gender <- ggplot(df_final, aes(x=zscore_EF, y=zscore_SF, color=Sex)) +
+SF_gender <- ggplot(df_final, aes(x=zscore_EF, y=zscore_SF, color=Sex, fill=Sex)) +  # Add fill aesthetic
   geom_point() +
-  geom_smooth(method="lm", se=TRUE) +
+  geom_smooth(method="lm", se=TRUE, alpha=0.2) +  # Add transparency to fill
   theme_pubr() +
   xlab("Executive Functions (z-score)") +
   ylab("Space Fortress (z-score)") +
   theme(plot.title = element_text(hjust = 0.1)) +
   scale_color_manual(name = "Gender", 
                      labels = c("Men", "Women"),
-                     values = c("man" = "#00aeef", "woman" = "#ef00ae")) # Replace "color1" and "color2" with your desired colors
+                     values = c("man" = "#003f5c", "woman" = "#ff8531")) +
+  scale_fill_manual(name = "Gender",   # Add fill scale
+                    labels = c("Men", "Women"),
+                    values = c("man" = "#003f5c", "woman" = "#ff8531"))
 
 # Adding marginal histograms
 SF_gender <- ggMarginal(SF_gender, groupColour = TRUE, groupFill = TRUE)
@@ -363,27 +366,34 @@ p_df <- melt(p_adjusted_matrix)
 # Combine correlation coefficients and adjusted p-values
 cor_df$p_adjusted <- p_df$value
 
-# Determine significance
-cor_df$significance <- ifelse(cor_df$p_adjusted < 0.05, "bold", "plain")
+# Create significance stars
+cor_df$stars <- ""
+cor_df$stars[cor_df$p_adjusted < 0.05] <- "*"
+cor_df$stars[cor_df$p_adjusted < 0.01] <- "**"
+cor_df$stars[cor_df$p_adjusted < 0.001] <- "***"
 
 # Rename columns for clarity
-colnames(cor_df) <- c("CognitiveTask", "SpaceFortressScore", "Correlation", "p_adjusted", "significance")
+colnames(cor_df) <- c("CognitiveTask", "SpaceFortressScore", "Correlation", "p_adjusted", "stars")
 
 # Plot
 EFSF_matrix <- ggplot(cor_df, aes(x = SpaceFortressScore, y = CognitiveTask, fill = Correlation)) +
   geom_tile(color = "white") +
-  geom_text(aes(label = sub("^(-?)0\\.", "\\1.", sprintf("%.2f", Correlation)), 
-            fontface = significance), color = "white", size = 3) +
+  geom_text(aes(label = paste0(sub("^(-?)0\\.", "\\1.", sprintf("%.2f", Correlation)), stars)), 
+            color = "white", size = 3) +
   scale_fill_viridis(option = "magma", 
                      limits = c(.1, .6),
-                     direction = -1,  # Add this line to invert the colors
+                     direction = -1,
                      name = "Pearson\nCorrelation") +
   theme_minimal() +
+  theme(
+    plot.margin = margin(0, 0, 0, 0),
+    axis.text = element_text(margin = margin(0, 0, 0, 0))
+  ) +
   labs(x = "SF Scores", y = "EF composite scores") +
   coord_fixed()
 EFSF_matrix
 
 # Save plot
 filename <- paste0(figure_path, "/SF_EF_matrix.pdf")
-ggsave(filename, plot = EFSF_matrix, width = 5, height = 4, units = "in")
+ggsave(filename, plot = EFSF_matrix, width = 5, height = 3, units = "in")
 
