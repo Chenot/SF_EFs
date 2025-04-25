@@ -6,6 +6,7 @@ library(cowplot)
 library(broom)
 library(xtable)
 library(reshape2)
+library(viridis)
 
 ## PATH MANAGEMENT
 # Get the directory and path to this file
@@ -371,11 +372,16 @@ colnames(cor_df) <- c("CognitiveTask", "SpaceFortressScore", "Correlation", "p_a
 # Plot
 EFSF_matrix <- ggplot(cor_df, aes(x = SpaceFortressScore, y = CognitiveTask, fill = Correlation)) +
   geom_tile(color = "white") +
-  geom_text(aes(label = sprintf("%.2f", Correlation), fontface = significance), color = "black", size = 3) +  # Add correlation coefficients with significance
-  scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0, limit = c(-1, 1), space = "Lab", name="Pearson\nCorrelation") +
+  geom_text(aes(label = sub("^(-?)0\\.", "\\1.", sprintf("%.2f", Correlation)), 
+            fontface = significance), color = "white", size = 3) +
+  scale_fill_viridis(option = "magma", 
+                     limits = c(.1, .6),
+                     direction = -1,  # Add this line to invert the colors
+                     name = "Pearson\nCorrelation") +
   theme_minimal() +
   labs(x = "SF Scores", y = "EF composite scores") +
   coord_fixed()
+EFSF_matrix
 
 # Save plot
 filename <- paste0(figure_path, "/SF_EF_matrix.pdf")
