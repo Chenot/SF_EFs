@@ -1,3 +1,27 @@
+## P06_SupplementaryMaterial.R
+# Author: Quentin Chenot
+# Date: 2025-05-05
+# Description: This script generates supplementary materials including distribution plots 
+#              and descriptive statistics for executive functions tasks
+# Dependencies: dplyr, ggplot2, ggpubr, gridExtra, cowplot, rstudioapi, e1071, stats, xtable
+# Inputs: 
+#   - Processed dataframe with z-scores: 'results/combined_data/data_zscored.csv'
+# Outputs:
+#   - Distribution plots saved as 'results/figures/SuppFig_EF_score_distribution.pdf'
+#   - LaTeX table with descriptive statistics
+#   - Demographics correlation plots saved as 'results/figures/SF_demographics.pdf'
+
+## LOAD LIBRARIES
+# Function to check if each required package is installed, and install it if not
+required_packages <- c("dplyr", "ggplot2", "ggpubr", "gridExtra", "cowplot", 
+                      "rstudioapi", "e1071", "stats", "xtable")
+install_if_not_present <- function(package) {
+  if (!require(package, character.only = TRUE)) {
+    install.packages(package)
+  }
+}
+lapply(required_packages, install_if_not_present) # Apply the function to each required package
+
 # Load the libraries
 library(dplyr)
 library(ggplot2)
@@ -6,9 +30,8 @@ library(gridExtra)
 library(cowplot)
 library(rstudioapi)
 library(e1071)
-library(cowplot)
-library(xtable)
 library(stats)
+library(xtable)
 
 ## PATH MANAGEMENT
 # Get the directory and path to this file

@@ -1,5 +1,24 @@
-### Script to extract SF psychometrics
-## LIBRARY MANAGEMENT
+## P04_SF_psychometrics.R
+# Author: Quentin Chenot
+# Date: 2025-05-05
+# Description: This script analyzes Space Fortress performance sensitivity and reliability
+# Dependencies: ggplot2, dplyr, tidyr, ggpubr, e1071, nortest, psych, rstudioapi
+# Inputs: Combined dataframe saved in 'results/combined_data/data.csv'
+# Outputs: 
+#   - Printed psychometric statistics (skewness, kurtosis, normality tests, ICC)
+#   - Sensitivity plot saved as 'results/figures/SF_sensitivity.pdf'
+
+## LOAD LIBRARIES
+# Function to check if each required package is installed, and install it if not
+required_packages <- c("ggplot2", "dplyr", "tidyr", "ggpubr", "e1071", "nortest", "psych", "rstudioapi")
+install_if_not_present <- function(package) {
+  if (!require(package, character.only = TRUE)) {
+    install.packages(package)
+  }
+}
+lapply(required_packages, install_if_not_present) # Apply the function to each required package
+
+# Load the libraries
 library(ggplot2)
 library(dplyr)
 library(tidyr)
@@ -7,6 +26,7 @@ library(ggpubr)
 library(e1071)
 library(nortest)
 library(psych)
+library(rstudioapi)
 
 ## PATH MANAGEMENT
 # Get the directory and path to this file

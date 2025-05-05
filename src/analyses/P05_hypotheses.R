@@ -1,3 +1,32 @@
+## P05_hypotheses.R
+# Author: Quentin Chenot
+# Date: 2025-05-05
+# Description: This script tests hypotheses about relationships between Space Fortress performance, 
+#              executive functions, and demographics
+# Dependencies: ggplot2, ggpubr, ggExtra, dplyr, cowplot, broom, xtable, reshape2, rstudioapi
+# Inputs: 
+#   - Processed dataframe with z-scores: 'results/combined_data/data_zscored.csv'
+# Outputs:
+#   - Correlation plots saved as:
+#     * 'results/figures/SF_EF.pdf'
+#     * 'results/figures/SF_EFsubscores.pdf'
+#     * 'results/figures/SF_demographics.pdf'
+#     * 'results/figures/SF_gender.pdf'
+#     * 'results/figures/SF_EF_matrix.pdf'
+#   - Printed correlation statistics and regression model results
+
+## LOAD LIBRARIES
+# Function to check if each required package is installed, and install it if not
+required_packages <- c("ggplot2", "ggpubr", "ggExtra", "dplyr", "cowplot", 
+                      "broom", "xtable", "reshape2", "rstudioapi")
+install_if_not_present <- function(package) {
+  if (!require(package, character.only = TRUE)) {
+    install.packages(package)
+  }
+}
+lapply(required_packages, install_if_not_present) # Apply the function to each required package
+
+# Load the libraries
 library(ggplot2)
 library(ggpubr)
 library(ggExtra)
@@ -6,6 +35,7 @@ library(cowplot)
 library(broom)
 library(xtable)
 library(reshape2)
+library(rstudioapi)
 
 ## PATH MANAGEMENT
 # Get the directory and path to this file

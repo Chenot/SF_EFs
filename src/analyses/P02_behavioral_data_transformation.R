@@ -1,10 +1,10 @@
-## P02_data_transformation.R
+## P02_behavioral_data_transformation.R
 # Author: Quentin Chenot
-# Date: 2023-07-18
+# Date: 2025-05-05
 # Description: This script performs various transformations on combined data, calculates z-scores, and saves the processed dataframe.
-# Dependencies: dplyr, rstudioapi, e1071, ggplot2, ggpubr, gridExtra, cowplot
-# Inputs : Combined dataframe saved in a 'results/combined_data' directory
-# Outputs : Processed dataframe (EFs tasks normalized with a z-score) saved in 'results/combined_data' directory
+# Dependencies: dplyr, rstudioapi
+# Inputs: Combined dataframe saved in 'results/combined_data/data.csv'
+# Outputs: Processed dataframe with z-scores saved as 'results/combined_data/data_zscored.csv'
 
 ## LOAD LIBRARIES
 # Function to check if each required package is installed, and install it if not

@@ -1,15 +1,16 @@
 ## P01_combine_data.R
 # Author: Quentin Chenot
-# Date: 2023-06-26
-# Description: This script combine the results of all executive functions tasks and demographics data into one dataframe.
-# Dependencies: dplyr
-# Inputs : processed behavioral data from the executive functions tasks stored in a '/results/combined_data' directory
-# Outputs : one dataframe saved in a 'results/combined_data' directory
-
+# Date: 2025-05-05
+# Description: This script combines results from executive functions tasks and demographics data into one dataframe.
+# Dependencies: dplyr, rstudioapi
+# Inputs: 
+#   - Demographics data: 'data/participants_demographics.csv'
+#   - Task data: 'results/combined_data/behavior/*.csv' (multiple files)
+# Outputs: Combined dataframe saved as 'results/combined_data/data.csv'
 
 ## LOAD LIBRARIES
 # Function to check if each required package is installed, and install it if not
-required_packages <- c("dplyr") # List of packages required for this script
+required_packages <- c("dplyr", "rstudioapi") # List of packages required for this script
 install_if_not_present <- function(package) {
   if (!require(package, character.only = TRUE)) {
     install.packages(package)
@@ -18,7 +19,8 @@ install_if_not_present <- function(package) {
 lapply(required_packages, install_if_not_present) # Apply the function to each required package
 
 # Load the libraries
-library(dplyr) 
+library(dplyr)
+library(rstudioapi)
 
 
 ## PATH MANAGEMENT

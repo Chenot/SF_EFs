@@ -1,4 +1,26 @@
-### Script to extract sample demographics
+## P03_demographics.R
+# Author: Quentin Chenot
+# Date: 2025-05-05
+# Description: This script extracts and summarizes demographic information from the combined dataset
+# Dependencies: dplyr, rstudioapi, tidyr
+# Inputs: Combined dataframe saved in 'results/combined_data/data.csv'
+# Outputs: Printed summary statistics of demographic information
+
+## LOAD LIBRARIES
+# Function to check if each required package is installed, and install it if not
+required_packages <- c("dplyr", "rstudioapi", "tidyr") # List of packages required for this script
+install_if_not_present <- function(package) {
+  if (!require(package, character.only = TRUE)) {
+    install.packages(package)
+  }
+}
+lapply(required_packages, install_if_not_present) # Apply the function to each required package
+
+# Load the libraries
+library(dplyr)
+library(tidyr)
+library(rstudioapi)
+
 
 ## PATH MANAGEMENT
 # Get the directory and path to this file
