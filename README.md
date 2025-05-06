@@ -5,6 +5,7 @@
 This repository contains the R scripts used for data preprocessing and analysis in the associated scientific article.
 
 ## **Directory Structure**
+```
 project/
 ├── data/
 │   └── sub-<participant_id>/
@@ -39,6 +40,7 @@ project/
         ├── P04_SF_psychometrics.R
         ├── P05_hypotheses.R
         └── P06_SupplementaryMaterial.R
+```
 
 ## **Scripts Overview**
 
@@ -110,6 +112,7 @@ project/
 
 ## **Dependencies**
 
+### **Statistical analysis software**
 - R version: 4.2.0 or higher
 - Required packages:
   - **Data manipulation:** `dplyr`, `tidyr`, `reshape2`
@@ -122,16 +125,15 @@ project/
 - R version: 4.2.0
 - RStudio version: 2023.06.0
 
-### **License**
+## **License**
 This project is licensed under [MIT License](LICENSE.md) - see LICENSE.md file for details
 
-### **Preregistration**
+## **Preregistration**
 The analysis plan for this study was preregistered on OSF: [[link to preregistration](https://osf.io/5t3re/)]
 
-### **Data Availability**
+## **Data Availability**
 - Raw data are available upon request (contact: quentinchenot@gmail.com)
 - Preprocessed data are available on Github: [[link to Github](https://github.com/Chenot/SF_EFs/)]
 
 ## **Contact**
-
 For questions or issues, please contact Quentin Chenot [quentinchenot@gmail.com].
