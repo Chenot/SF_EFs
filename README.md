@@ -1,6 +1,7 @@
-# Date: 2025-05-05
-# Author: Quentin Chenot
-# Article: "Evaluating the Space Fortress task for executive functions training applications: Psychometric evidence and cognitive correlates"
+# Article: Evaluating the Space Fortress task for executive functions training applications: Psychometric evidence and cognitive correlates
+- **Journal:** Submitted to Applied Cognitive Psychology
+- **Authors:** Quentin Chenot and Sébastien Scannella
+- **Date of submission:** 2025-06-05 [YYYY-MM-DD]
 
 This repository contains the R scripts used for data preprocessing and analysis in the associated scientific article.
 
@@ -52,7 +53,7 @@ project/
    - Saves preprocessed data in `/results/combined_data/behavior/`
 
 2. **Space Fortress Processing (`SF.R`)**
-   - Processes raw Space Fortress data following BIDS format
+   - Processes raw individual Space Fortress data
    - Computes performance scores for each game session
    - Saves processed data in `/tmp_data/` and `/results/combined_data/behavior/`
 
@@ -72,29 +73,32 @@ project/
 
 1. **Data Combination (`P01_combine_data.R`)**
    - Combines demographics and task performance data
-   - Creates unified dataset for analysis
+   - Creates unified dataset for analysis in `results/combined_data/`
 
 2. **Data Transformation (`P02_behavioral_data_transformation.R`)**
    - Performs data transformations
    - Calculates z-scores for task performance
-   - Saves output in /combined_data/behavior/
+   - Saves output in `results/combined_data/`
 
 3. **Demographics Analysis (`P03_demographics.R`)**
-   - Extracts and summarizes participant demographics
+   - Extracts and summarizes participant demographics in the Terminal
 
 4. **Space Fortress Psychometrics (`P04_SF_psychometrics.R`)**
    - Analyzes Space Fortress sensitivity and reliability
-   - Generates and saves associated figures
+   - Generates text with the results in the Terminal
+   - Generates and saves associated figures in `results/figures/`
 
 5. **Hypotheses Testing (`P05_hypotheses.R`)**
    - Tests main hypotheses about relationships between:
      - Space Fortress performance and executive functions
      - Space Fortress performance and demographics
-   - Generates and saves associated figures
+   - Generates text with the results in the Terminal  
+   - Generates and saves associated figures in `results/figures/`
 
 6. **Supplementary Analyses (`P06_SupplementaryMaterial.R`)**
    - Creates statisticals analyses available in supplementary materials
-   - Generates and saves associated figures
+   - Generates text with the results in the Terminal
+   - Generates and saves associated figures in `results/figures/`
 
 ## **Instructions**
 
