@@ -1,4 +1,4 @@
-# Article: Evaluating the Space Fortress task for executive functions training applications: Psychometric evidence and cognitive correlates
+# Evaluating the Space Fortress task for executive functions training applications: Psychometric evidence and cognitive correlates
 - **Journal:** Submitted to Applied Cognitive Psychology
 - **Authors:** Quentin Chenot and Sébastien Scannella
 - **Date of submission:** 2025-06-05 [YYYY-MM-DD]
@@ -110,19 +110,15 @@ project/
    - Check `tmp_data/` for intermediate results
 
 3. **Analysis**
-   - From raw data: Run `P01_combine_data.R` and `P02_behavioral_data_transformation.R` to obtain preprocessed data stored in `/results/combined_data`
-   - From preprocessed data: Run `P03_demographics.R`, `P04_SF_psychometrics.R`, `P05_hypotheses.R` and `P06_SupplementaryMaterial.R`
+   - **From raw data:** Run `P01_combine_data.R` and `P02_behavioral_data_transformation.R` to obtain preprocessed data stored in `/results/combined_data`
+   - **From preprocessed data:** Run `P03_demographics.R`, `P04_SF_psychometrics.R`, `P05_hypotheses.R` and `P06_SupplementaryMaterial.R`
    - Generated figures will be saved in `results/figures/`
 
 ## **Dependencies**
 
 ### **Statistical analysis software**
-- R version: 4.2.0 or higher
-- Required packages:
-  - **Data manipulation:** `dplyr`, `tidyr`, `reshape2`
-  - **Visualization:** `ggplot2`, `ggpubr`, `ggExtra`, `cowplot`
-  - **Statistics:** `e1071`, `nortest`, `psych`, `broom`
-  - **Utilities:** `rstudioapi`, `stringr`, `foreach`, `bestNormalize`
+- R and RStudio
+- Required packages: `dplyr`, `tidyr`, `reshape2`, `ggplot2`, `ggpubr`, `ggExtra`, `cowplot`, `e1071`, `nortest`, `psych`, `broom`, `rstudioapi`, `stringr`, `foreach`, `bestNormalize`
 
 ### **Computational Environment**
 - OS: Windows 10
