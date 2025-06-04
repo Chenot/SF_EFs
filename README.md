@@ -1,7 +1,7 @@
 # Evaluating the Space Fortress task for executive functions training applications: Psychometric evidence and cognitive correlates
-- **Journal:** Submitted to Applied Cognitive Psychology
+- **Journal:** Submitted to Heliyon Applied Psychology
 - **Authors:** Quentin Chenot and Sébastien Scannella
-- **Date of submission:** 2025-06-05 [YYYY-MM-DD]
+- **Date of submission:** 2025-06-04 [YYYY-MM-DD]
 
 This repository contains the R scripts used for data preprocessing and analysis in the associated scientific article.
 
